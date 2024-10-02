@@ -1,6 +1,6 @@
 package com.openwar.openwaradmin;
 
-import com.openwar.openwarfaction.commands.AdminCommand;
+import com.openwar.openwaradmin.Commands.AdminCmd;
 import com.openwar.openwarfaction.factions.FactionManager;
 import com.openwar.openwarlevels.level.PlayerDataManager;
 import net.milkbowl.vault.economy.Economy;
@@ -30,12 +30,10 @@ public final class Main extends JavaPlugin {
         System.out.println(" ");
         System.out.println(" ");
         System.out.println(" OpenWar - Admin v1.0");
-        this.getCommand("admin").setExecutor(new AdminCommand(fm, pl, economy), this);
-
-
         System.out.println(" ");
         System.out.println(" ");
         setupDepend();
+        this.getCommand("admin").setExecutor(new AdminCmd(pl, fm, economy));
     }
 
     @Override
