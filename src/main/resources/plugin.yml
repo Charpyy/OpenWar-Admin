@@ -1,3 +1,9 @@
 name: OpenWar-Admin
 version: '${project.version}'
+depend: [OpenWar-Core]
 main: com.openwar.openwaradmin.Main
+commands:
+  admin:
+    description: Faction Admins Commands.
+    usage: /admin commands
+    aliases: [ad]
