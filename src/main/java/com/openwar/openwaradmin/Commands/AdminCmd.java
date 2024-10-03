@@ -2,14 +2,18 @@ package com.openwar.openwaradmin.Commands;
 
 import com.openwar.openwarfaction.factions.Faction;
 import com.openwar.openwarfaction.factions.FactionManager;
+import com.openwar.openwarfaction.factions.Rank;
 import com.openwar.openwarlevels.level.PlayerDataManager;
 import com.openwar.openwarlevels.level.PlayerLevel;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class AdminCmd implements CommandExecutor {
 
@@ -36,8 +40,8 @@ public class AdminCmd implements CommandExecutor {
                 //====== FACTION ADMIN COMMANDS========================
                 switch (args[1].toLowerCase()) {
                     case "xp":
-                        if (args[1] != null) {
-                            int exp = Integer.parseInt(args[1]);
+                        if (args[2] != null) {
+                            int exp = Integer.parseInt(args[2]);
                             Faction faction = fm.getFactionByPlayer(player.getUniqueId());
                             if (faction != null) {
                                 faction.addExp(exp);
@@ -46,8 +50,8 @@ public class AdminCmd implements CommandExecutor {
                         }
                         break;
                     case "lvl":
-                        if (args[1] != null) {
-                            int lvl = Integer.parseInt(args[1]);
+                        if (args[2] != null) {
+                            int lvl = Integer.parseInt(args[2]);
                             Faction faction = fm.getFactionByPlayer(player.getUniqueId());
                             if (faction != null) {
                                 faction.setLevel(lvl);
@@ -55,16 +59,39 @@ public class AdminCmd implements CommandExecutor {
                             }
                         }
                         break;
-                    case "delete":
-                        if (args[1] != null) {
-                            String factionName = args[1];
+                    case "disband":
+                        if (args[2] != null) {
+                            String factionName = args[2];
                             Faction faction = fm.getFactionByName(factionName);
                             if (faction != null) {
                                 fm.deleteFaction(faction);
-                                Bukkit.broadcast(admin + "§cDecided to delete the faction " + faction.getName(), null);
+                                Bukkit.broadcast(admin + "§cDecided to disband the faction " + faction.getName(), null);
                             }
                         }
                         break;
+                    case "join":
+                        if (args[2] != null) {
+                            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[2]);
+                            UUID uuid = offlinePlayer.getUniqueId();
+                            if (args[3] != null) {
+                                Faction faction = fm.getFactionByName(args[3]);
+                                if (faction != null) {
+                                    fm.addMemberToFaction(uuid, faction.getFactionUUID(), Rank.RECRUE);
+                                }
+                            }
+                        }
+                        break;
+                    case "promote":
+                        if (args[2] != null) {
+                            if (args[3] != null) {
+                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[2]);
+                                UUID uuid = offlinePlayer.getUniqueId();
+                                Faction faction = fm.getFactionByName(args[3]);
+                                if (faction != null) {
+                                    fm.promoteMember(uuid, faction);
+                                }
+                            }
+                        }
                     }
                 break;
 
@@ -72,16 +99,16 @@ public class AdminCmd implements CommandExecutor {
                 //====== LEVELS ADMIN COMMANDS========================
                 switch (args[1].toLowerCase()) {
                     case "lvl": {
-                        Player target = Bukkit.getPlayer(args[3]);
-                        int level = Integer.parseInt(args[4]);
+                        Player target = Bukkit.getPlayer(args[2]);
+                        int level = Integer.parseInt(args[3]);
                         PlayerLevel playerLevel = pl.loadPlayerData(target.getUniqueId(), null);
                         playerLevel.setLevel(level);
                         sender.sendMessage(admin+"level of §c"+target.getName() +" §7set to §c"+playerLevel.getLevel());
                     }
                         break;
                     case "xp": {
-                        Player target = Bukkit.getPlayer(args[3]);
-                        double xp = Integer.parseInt(args[4]);
+                        Player target = Bukkit.getPlayer(args[2]);
+                        double xp = Integer.parseInt(args[3]);
                         PlayerLevel playerLevel = pl.loadPlayerData(target.getUniqueId(), null);
                         playerLevel.setExperience(xp, target);
                         sender.sendMessage(admin + "Experience of §c" + target.getName() + " §7set to §c" + playerLevel.getExperience());
@@ -93,3 +120,5 @@ public class AdminCmd implements CommandExecutor {
         return true;
     }
 }
+
+// usage = /admin fac disband name
