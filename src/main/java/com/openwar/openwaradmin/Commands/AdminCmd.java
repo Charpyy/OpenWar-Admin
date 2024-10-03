@@ -77,6 +77,7 @@ public class AdminCmd implements CommandExecutor {
                                 Faction faction = fm.getFactionByName(args[3]);
                                 if (faction != null) {
                                     fm.addMemberToFaction(uuid, faction.getFactionUUID(), Rank.RECRUE);
+                                    player.sendMessage(admin+" "+offlinePlayer +" joined the faction: "+faction.getName());
                                 }
                             }
                         }
@@ -89,9 +90,47 @@ public class AdminCmd implements CommandExecutor {
                                 Faction faction = fm.getFactionByName(args[3]);
                                 if (faction != null) {
                                     fm.promoteMember(uuid, faction);
+                                    player.sendMessage(admin+" promoted "+offlinePlayer +" from faction: "+faction.getName()+" to rank: "+faction.getRank(uuid));
                                 }
                             }
                         }
+                        break;
+                    case "kick":
+                        if (args[2] != null) {
+                            if (args[3] != null) {
+                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[2]);
+                                UUID uuid = offlinePlayer.getUniqueId();
+                                Faction faction = fm.getFactionByName(args[3]);
+                                if (faction != null) {
+                                    fm.removePlayerFromFaction(uuid);
+                                    player.sendMessage(admin+" kicked "+offlinePlayer +" from faction: "+faction.getName());
+                                }
+                            }
+                        }
+                        break;
+                    case "invite":
+                        if (args[2] != null) {
+                            if (args[3] != null) {
+                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[2]);
+                                UUID uuid = offlinePlayer.getUniqueId();
+                                Faction faction = fm.getFactionByName(args[3]);
+                                if (faction != null) {
+                                    fm.invitePlayerToFaction(uuid, faction.getFactionUUID());
+                                    player.sendMessage(admin+" invited "+offlinePlayer +" on faction: "+faction.getName());
+                                }
+                            }
+                        }
+                    case "name":
+                        if (args[2] != null) {
+                            if (args[3] != null) {
+                                Faction faction = fm.getFactionByName(args[2]);
+                                if (faction != null) {
+                                    fm.setName(faction, args[3]);
+                                    player.sendMessage(admin+" Name of "+faction.getName() +" is now "+faction.getName());
+                                }
+                            }
+                        }
+                        break;
                     }
                 break;
 
@@ -121,4 +160,5 @@ public class AdminCmd implements CommandExecutor {
     }
 }
 
-// usage = /admin fac disband name
+// usage = /admin|ad fac disband|kick|invite|promote|lvl|xp|join faction
+//                   lvl xp|lvl
